@@ -1,0 +1,9 @@
+node_modules/
+
+.env
+
+about.md
+contact.md
+experience.md
+achievement.md
+freelance.md
