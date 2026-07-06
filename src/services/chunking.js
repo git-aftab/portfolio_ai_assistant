@@ -1,3 +1,5 @@
+import { CHUNK_SIZE, CHUNK_OVERLAP } from "../utils/constants.js";
+
 export const approximateTokens = (text) => {
   return Math.ceil(text.lenght / 4);
 };
@@ -10,7 +12,7 @@ const cleanTranscript = (text) => {
 };
 
 export const chunkText = (text) => {
-  if (!text || typeof text !== "string") return [];
+  if (!text.trim() || typeof text !== "string") return [];
 
   const chunks = [];
   const words = text.split(" ");
@@ -25,7 +27,12 @@ export const chunkText = (text) => {
     const content = words.slice(start, end).join(" ").trim();
 
     if (content.length > 0) {
-      chunks.push({ chunkIndex, content });
+      chunks.push({
+        id: chunkIndex,
+        content,
+        wordCount: end - start,
+        tokenEstimate: approximateTokens(content),
+      });
       chunkIndex++;
     }
 
