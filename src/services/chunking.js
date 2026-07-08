@@ -4,7 +4,7 @@ export const approximateTokens = (text) => {
   return Math.ceil(text.lenght / 4);
 };
 
-const cleanTranscript = (text) => {
+export const cleanTranscript = (text) => {
   return text
     .replace(/\[.*?\]/g, "")
     .replace(/\s+/g, " ")

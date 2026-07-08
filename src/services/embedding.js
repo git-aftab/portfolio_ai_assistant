@@ -1,9 +1,9 @@
 import axios from "axios";
-import { EMBEDDING_MODEL, EMBEDDING_DIMENSION } from "../utils/constants.js";
+import { EMBEDDING_MODEL, } from "../utils/constants.js";
 
-export const generateEmbedding = (text, task = "retrieval.passage") => {
+export const generateEmbedding = async(text, task = "retrieval.passage") => {
   try {
-    const res = axios.post(
+    const res = await axios.post(
       "https://jina.ai/v1/embeddings",
       {
         model: EMBEDDING_MODEL,
@@ -14,7 +14,7 @@ export const generateEmbedding = (text, task = "retrieval.passage") => {
       {
         headers: {
           Authorization: `Bearer ${process.env.JINA_API_KEY}`,
-          "Content-Type": "applicatiion.json",
+          "Content-Type": "application/json",
         },
       },
     );
