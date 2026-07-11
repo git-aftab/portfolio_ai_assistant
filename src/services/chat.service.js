@@ -3,3 +3,5 @@ const queryLLMService = async (query) => {
   // In a real implementation, this would involve making an HTTP request to the LLM API
 
 }
+
+export { queryLLMService };

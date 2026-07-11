@@ -1,4 +1,4 @@
-import { qdrant } from "../db/qdrantDb";
+import { qdrant } from "../db/qdrantDb.js";
 import {} from "../utils/constants.js";
 import crypto from "crypto";
 
