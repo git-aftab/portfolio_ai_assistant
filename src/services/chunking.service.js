@@ -1,7 +1,7 @@
 import { CHUNK_SIZE, CHUNK_OVERLAP } from "../utils/constants.js";
 
 export const approximateTokens = (text) => {
-  return Math.ceil(text.lenght / 4);
+  return Math.ceil(text.lenghth / 4);
 };
 
 export const cleanTranscript = (text) => {
@@ -13,6 +13,8 @@ export const cleanTranscript = (text) => {
 
 export const chunkText = (text) => {
   if (!text.trim() || typeof text !== "string") return [];
+  
+  console.log("Approximate Tokens:", approximateTokens(text));
 
   const chunks = [];
   const words = text.split(" ");

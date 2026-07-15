@@ -1,15 +1,14 @@
 import { qdrant } from "../db/qdrantDb.js";
-import {} from "../utils/constants.js";
 import crypto from "crypto";
 
-export const storeEmbeddings = async (
+export const storeEmbedding = async ({
+  embedding,
   title,
   source,
   type,
-  heading,
   chunkIndex,
   chunkText,
-) => {
+}) => {
   try {
     await qdrant.upsert("portfolio-assistant", {
       wait: true,
@@ -17,10 +16,13 @@ export const storeEmbeddings = async (
         {
           id: crypto.randomUUID(),
           vector: embedding,
+
           payload: {
             title,
-            chunkText,
+            source,
+            type,
             chunkIndex,
+            chunkText,
           },
         },
       ],
@@ -31,11 +33,17 @@ export const storeEmbeddings = async (
   }
 };
 
-export const searchEmbedding = async (queryText, source) => {
-  const results = await qdrant.query("portfolio-assistant", {
-    query: queryText,
-    limit: 3,
-    with_payload: true,
-  });
-  return results;
+export const searchEmbedding = async (queryEmbedding) => {
+  try {
+    const results = await qdrant.query("portfolio-assistant", {
+      query: queryEmbedding,
+      limit: 3,
+      with_payload: true,
+    });
+
+    return results;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

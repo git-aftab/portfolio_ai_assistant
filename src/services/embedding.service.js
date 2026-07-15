@@ -3,8 +3,11 @@ import { EMBEDDING_MODEL, } from "../utils/constants.js";
 
 export const generateEmbedding = async(text, task = "retrieval.passage") => {
   try {
+    // console.log("E_mode", EMBEDDING_MODEL);
+    // console.log("Key", process.env.JINA_API_KEY);
+    
     const res = await axios.post(
-      "https://jina.ai/v1/embeddings",
+      "https://api.jina.ai/v1/embeddings",
       {
         model: EMBEDDING_MODEL,
         task,
@@ -24,8 +27,11 @@ export const generateEmbedding = async(text, task = "retrieval.passage") => {
   } catch (error) {
     console.error(
       "Embedding Generation failed",
-      error.res?.data || error.message,
+      error.response?.data || error.message,
     );
+    console.log(error.config?.url);
+    console.log(error.response?.status);
+    console.log(error.response?.data);
     throw error;
   }
 };
