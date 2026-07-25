@@ -5,13 +5,13 @@ import { askAi } from "../services/chat.service.js";
 
 
 const queryLLM = asyncHandler(async (req, res) => {
-  const query = req.body;
-  console.log("query: ", query);
+  const {query} = req.body;
+  console.log("query: ", query.trim());
 
   if (!query ) {
     throw new ApiError(400, "Query is required");
   }
-  console.log("query: ", query.trim());
+//   console.log("query: ", query.trim());
 
   const llmResponse = await askAi(query);
   
@@ -21,7 +21,7 @@ const queryLLM = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .ApiResponse(200, { Response: query, llmResponse }, "Answer generated successfully");
+    .json(new ApiResponse(200, "LLM response generated successfully", llmResponse));
 });
 
 export { queryLLM };

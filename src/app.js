@@ -47,10 +47,13 @@ app.use(
   }),
 );
 
-// Routes
+// Routes Imports
 import queryRoute from "./routes/chat.route.js";
 
+// Routes
 app.use("/api/v1/chat", queryRoute);
+
+
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Portfolio assistant" });
