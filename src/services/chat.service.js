@@ -26,13 +26,16 @@ const retrieveContext = async (question) => {
   return context;
 };
 
-export const askAi = async (question) => {
+export const askAi = async (question, history = []) => {
   const context = await retrieveContext(question);
   console.log("context: ", context);
-  
+
   const prompt = `
   Context:
   ${context}
+
+  chat history:
+  ${history.map((h)=> `User: ${h.role}\nAI: ${h.content}`).join("\n")}
 
   Question: ${question}
   `;
@@ -40,5 +43,4 @@ export const askAi = async (question) => {
   const llmResponse = await callLLM(prompt);
 
   return llmResponse;
-  
 };

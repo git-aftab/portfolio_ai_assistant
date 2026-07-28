@@ -6,16 +6,16 @@ import { askAi } from "../services/chat.service.js";
 
 const queryLLM = asyncHandler(async (req, res) => {
   console.log(req.body);
-  const {message} = req.body;
-  console.log("message: ", message);
-  console.log("message: ", message.trim());
+  const {query, history = []} = req.body;
+  console.log("query: ", query);
+  console.log("query: ", query.trim());
 
-  if (!message.trim() ) {
-    throw new ApiError(400, "Message is required");
+  if (!query.trim() ) {
+    throw new ApiError(400, "query is required");
   }
-//   console.log("message: ", message.trim());
+//   console.log("query: ", query.trim());
 
-  const llmResponse = await askAi(message.trim());
+  const llmResponse = await askAi(query.trim(), history);
   
   if(!llmResponse) {
     throw new ApiError(500, "Failed to generate response from LLM");
