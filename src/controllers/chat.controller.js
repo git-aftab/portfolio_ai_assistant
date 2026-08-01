@@ -2,30 +2,82 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { askAi } from "../services/chat.service.js";
-
+import Analytics from "../models/analytics.model.js";
+import { Completions } from "groq-sdk/resources";
+import { APIError } from "groq-sdk";
 
 const queryLLM = asyncHandler(async (req, res) => {
   console.log(req.body);
-  const {query, history = []} = req.body;
-  console.log("query: ", query);
+  const { query, history = [] } = req.body;
+  // console.log("query: ", query);
   console.log("query: ", query.trim());
 
-  if (!query.trim() ) {
+  if (!query.trim()) {
     throw new ApiError(400, "query is required");
   }
-//   console.log("query: ", query.trim());
+  //   console.log("query: ", query.trim());
 
+  const startTime = Date.now();
   const llmResponse = await askAi(query.trim(), history);
-  
-  if(!llmResponse) {
+
+  const endTime = Date.now();
+  const responseTime = endTime - startTime;
+
+  if (!llmResponse) {
     throw new ApiError(500, "Failed to generate response from LLM");
   }
 
-  console.log("llmResponse: ", llmResponse);
+  // Save analytics data to MongoDB
+  const analyticsData = await Analytics.create({
+    question: query.trim(),
+    answer: llmResponse,
+    responseTime,
+    ip: req.ip,
+    userAgent: req.headers["user-agent"],
+    success: true,
+    promptTokens: llmResponse.promptTokens,
+    completionTokens: llmResponse.completionTokens,
+    totalTokens: llmResponse.totalTokens,
+  });
 
   res
     .status(200)
-    .json(new ApiResponse(200, "LLM response generated successfully", llmResponse));
+    .json(
+      new ApiResponse(
+        200,
+        "LLM response generated successfully",
+        analyticsData,
+      ),
+    );
 });
 
-export { queryLLM };
+const getAnalytics = asyncHandler(async (req, res) => {
+  const analyticsData = await Analytics.aggregate([
+    {
+      $group: {
+        id: null,
+        totalQueries: { $sum: 1 },
+        averageResponseTime: { $avg: "$responseTime" },
+        totalPromptTokens: { $sum: "$promptTokens" },
+        totalCompletionTokens: { $sum: "$completionTokens" },
+        totalTokens: { $sum: "$totalTokens" },
+      },
+    },
+  ]);
+
+  if (!analyticsData) {
+    throw new APIError(500, "Something went wrong");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        "Analytics data retrieved successfully",
+        analyticsData[0],
+      ),
+    );
+});
+
+export { queryLLM, getAnalytics };

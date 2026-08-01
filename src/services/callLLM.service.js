@@ -21,5 +21,10 @@ export const callLLM = async (prompt) => {
       },
     ],
   });
-  return completions.choices[0].message.content;
+  return {
+    answer: completions.choices[0].message.content,
+    promptTokens: completions.usage.prompt_tokens,
+    completionTokens: completions.usage.completion_tokens,
+    totalTokens: completions.usage.total_tokens
+  };
 };
