@@ -9,13 +9,17 @@ import { APIError } from "groq-sdk";
 const queryLLM = asyncHandler(async (req, res) => {
   console.log(req.body);
   const { query, history = [] } = req.body;
-  // console.log("query: ", query);
   console.log("query: ", query.trim());
 
   if (!query.trim()) {
     throw new ApiError(400, "query is required");
   }
-  //   console.log("query: ", query.trim());
+
+  const normalizedQuestion = query
+    .trim()
+    .toLowerCase()
+    .replace(/[.,!?;:]/g, "")
+    .replace(/\s+/g, " ");
 
   const startTime = Date.now();
   const llmResponse = await askAi(query.trim(), history);
@@ -30,6 +34,7 @@ const queryLLM = asyncHandler(async (req, res) => {
   // Save analytics data to MongoDB
   const analyticsData = await Analytics.create({
     question: query.trim(),
+    normalizedQuestion,
     answer: llmResponse,
     responseTime,
     ip: req.ip,
@@ -54,13 +59,34 @@ const queryLLM = asyncHandler(async (req, res) => {
 const getAnalytics = asyncHandler(async (req, res) => {
   const analyticsData = await Analytics.aggregate([
     {
-      $group: {
-        id: null,
-        totalQueries: { $sum: 1 },
-        averageResponseTime: { $avg: "$responseTime" },
-        totalPromptTokens: { $sum: "$promptTokens" },
-        totalCompletionTokens: { $sum: "$completionTokens" },
-        totalTokens: { $sum: "$totalTokens" },
+      $facet: {
+        overview: [
+          {
+            $group: {
+              _id: null,
+              totalQueries: { $sum: 1 },
+              averageResponseTime: { $avg: "$responseTime" },
+              totalPromptTokens: { $sum: "$promptTokens" },
+              totalCompletionTokens: { $sum: "$completionTokens" },
+              totalTokens: { $sum: "$totalTokens" },
+            },
+          },
+        ],
+
+        topQuestions: [
+          {
+            $group: {
+              _id: "$normalizedQuestion",
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $sort: { count: -1 },
+          },
+          {
+            $limit: 10,
+          },
+        ],
       },
     },
   ]);

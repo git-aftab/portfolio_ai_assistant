@@ -6,6 +6,11 @@ const analyticsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    normalizedQuestion: {
+      type: String,
+      required: true,
+      index: true,
+    },
     answer: {
       type: Object,
       required: true,
