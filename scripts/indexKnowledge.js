@@ -38,4 +38,4 @@ const uploadPortfolioDataToQdrant = async (query) => {
 
 uploadPortfolioDataToQdrant();
 
-export {};
+// export {};

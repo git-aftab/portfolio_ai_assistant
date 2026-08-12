@@ -1,292 +1,48 @@
-# VideoTube
+## Project: VideoTube — AI-Powered Video Platform
 
-## Overview
+**One-line summary:** A production-grade, YouTube-inspired video platform combining full social/media features with an AI pipeline for transcript-based semantic search, Q&A, and summarization via RAG — built to go deep on real-world backend architecture rather than tutorial-style CRUD.
 
-VideoTube is a full-stack video-sharing platform inspired by modern content platforms such as YouTube. The project was built as a deep dive into production-grade software engineering concepts including authentication systems, asynchronous processing, media management, caching, vector search, and Retrieval-Augmented Generation (RAG).
+**Type:** Full-stack web application (Backend API + Frontend SPA)
 
-Unlike traditional tutorial projects that focus primarily on CRUD operations, VideoTube was designed to explore how large-scale applications are architected and maintained in real-world environments.
+**Repository:** github.com/git-aftab/videoTube
 
-The project consists of a Node.js and Express backend, a React and TypeScript frontend, a Redis-powered caching layer, BullMQ workers for asynchronous processing, and an AI pipeline capable of generating video summaries, semantic search results, and question-answering experiences from video transcripts.
+### Backend Stack
+- Node.js, Express.js, MongoDB Atlas + Mongoose
+- Auth: JWT (access + refresh tokens, rotation), Passport.js, Google OAuth
+- Media: Cloudinary, Multer, FFmpeg (audio extraction)
+- Caching/Queues: Redis, BullMQ (async workers)
+- Email: Nodemailer + Mailtrap (dev)
 
----
+### AI/RAG Stack
+- Groq Whisper (speech-to-text transcription)
+- Jina AI (embeddings)
+- Qdrant (vector database)
+- Custom RAG pipeline (no LangChain)
 
-## Project Goals
+### Frontend Stack
+- React + TypeScript, Vite, Tailwind CSS, React Router
 
-The primary goal of VideoTube was not simply to create a video-sharing platform, but to gain practical experience with production-oriented backend engineering.
+### AI Pipeline (async, worker-driven)
+Video Upload → Cloudinary Storage → FFmpeg audio extraction → Groq Whisper transcription → Jina embeddings → Qdrant vector storage → RAG endpoints (search / Q&A / summarization)
 
-Key learning objectives included:
+RAG retrieves relevant transcript segments as grounding context rather than answering from model knowledge alone — improves factual accuracy, reduces hallucination. Enables natural-language interaction with video content instead of keyword-only search.
 
-* Designing scalable backend architectures
-* Building secure authentication systems
-* Managing media uploads at scale
-* Implementing asynchronous processing pipelines
-* Integrating AI capabilities into traditional applications
-* Exploring vector databases and semantic search
-* Understanding caching strategies and performance optimization
+### Core Features
+- Full auth: registration, login, multi-device sessions, refresh token rotation, protected routes, Google OAuth
+- Email verification + password reset with token expiration handling
+- Media pipeline: video/thumbnail/avatar/cover uploads with validation and lifecycle management
+- Discovery: search, sort, filter, pagination, personalized feed
+- Social layer: comments, likes, playlists, subscriptions, watch history, channels, community posts (tweets)
+- AI layer: video summarization, semantic search, transcript Q&A
 
----
+### Architecture
+Modular backend: routes → controllers → middleware → validators → services → models → utilities → workers (clean separation for maintainability/testability). BullMQ offloads audio extraction, transcription, embedding generation, and indexing so heavy AI work never blocks user-facing requests.
 
-## Technology Stack
+### Engineering Challenges Solved
+- Secure refresh token rotation + multi-device session consistency
+- Keeping cloud storage (Cloudinary) and DB state consistent during large video uploads
+- Coordinating a multi-stage async AI pipeline (transcription → embedding → vector storage → retrieval) across independent workers
+- Redis caching strategy for trending/popular content and frequently accessed metadata to reduce DB load
 
-### Backend
-
-* Node.js
-* Express.js
-* MongoDB Atlas
-* Mongoose
-
-### Authentication
-
-* JWT Authentication
-* Access Tokens
-* Refresh Tokens
-* Refresh Token Rotation
-* Passport.js
-* Google OAuth
-
-### Media Management
-
-* Cloudinary
-* Multer
-* FFmpeg
-
-### AI Infrastructure
-
-* Groq Whisper
-* Jina AI Embeddings
-* Qdrant Vector Database
-* Retrieval-Augmented Generation (RAG)
-
-### Caching & Background Jobs
-
-* Redis
-* BullMQ
-
-### Frontend
-
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
-* React Router
-
----
-
-## Core Features
-
-### Authentication System
-
-VideoTube implements a complete authentication workflow commonly found in production applications.
-
-Capabilities include:
-
-* User Registration
-* User Login
-* Secure Logout
-* JWT Authentication
-* Access Token and Refresh Token Architecture
-* Refresh Token Rotation
-* Protected Routes
-* Multi-Device Session Management
-* Google OAuth Integration
-
-The authentication system was designed to closely resemble patterns used in modern SaaS applications.
-
----
-
-### Email Verification & Account Recovery
-
-Users can verify their accounts and recover access when necessary.
-
-Features include:
-
-* Email Verification
-* Verification Tokens
-* Password Reset Requests
-* Secure Reset Tokens
-* Token Expiration Handling
-
-Email workflows are implemented using Nodemailer and Mailtrap during development.
-
----
-
-### Media Upload Pipeline
-
-The platform supports video uploads and media management through Cloudinary.
-
-Supported assets include:
-
-* Videos
-* Thumbnails
-* Profile Avatars
-* Cover Images
-
-The upload workflow includes validation, cloud storage integration, and asset lifecycle management.
-
----
-
-### Video Feed & Discovery
-
-Users can browse and discover content through:
-
-* Search
-* Sorting
-* Pagination
-* Filtering
-* Personalized Content Retrieval
-
-These features required efficient database querying and indexing strategies.
-
----
-
-### Social Features
-
-VideoTube includes several social platform features.
-
-Implemented functionality includes:
-
-* Comments
-* Likes
-* Playlists
-* Subscriptions
-* Watch History
-* User Profiles
-* Channel Management
-* Tweets and Community Posts
-
-These features helped explore relational data modeling within MongoDB.
-
----
-
-## AI Pipeline
-
-One of the most advanced aspects of the project is the AI processing pipeline.
-
-After a video is uploaded, it passes through a sequence of asynchronous workers.
-
-Pipeline:
-
-Video Upload
-
-→ Cloudinary Storage
-
-→ Audio Extraction using FFmpeg
-
-→ Speech-to-Text Transcription using Groq Whisper
-
-→ Embedding Generation using Jina AI
-
-→ Vector Storage in Qdrant
-
-→ RAG Endpoints for Search, Q&A, and Summarization
-
-This architecture allows users to interact with video content using natural language rather than relying solely on traditional keyword search.
-
----
-
-## Retrieval-Augmented Generation (RAG)
-
-VideoTube includes a RAG layer designed to make video content searchable and understandable through AI.
-
-Capabilities include:
-
-* Video Summarization
-* Semantic Search
-* Question Answering
-* Context Retrieval
-* Transcript-Based Knowledge Access
-
-Instead of generating responses purely from model knowledge, the system retrieves relevant transcript segments from Qdrant and uses them as context for response generation.
-
-This approach improves factual accuracy and reduces hallucinations.
-
----
-
-## Redis Caching
-
-Redis is used to improve performance and reduce database load.
-
-Potential caching targets include:
-
-* Trending Videos
-* Popular Content
-* Search Results
-* User Metadata
-* Frequently Accessed Resources
-
-Caching allows the system to respond faster while minimizing repeated database queries.
-
----
-
-## BullMQ Workers
-
-The project uses BullMQ to process resource-intensive tasks asynchronously.
-
-Examples include:
-
-* Audio Extraction
-* Transcript Generation
-* Embedding Creation
-* Search Indexing
-
-This prevents long-running operations from blocking user-facing API requests.
-
----
-
-## Architecture
-
-The backend follows a modular architecture with clear separation of responsibilities.
-
-Major layers include:
-
-* Routes
-* Controllers
-* Middleware
-* Validators
-* Services
-* Models
-* Utilities
-* Workers
-
-This structure improves maintainability, testability, and scalability.
-
----
-
-## Challenges Faced
-
-### Authentication Complexity
-
-Implementing secure refresh token rotation and session management required careful consideration of security and user experience.
-
-### Media Processing
-
-Handling large video uploads while maintaining consistency between cloud storage and database records introduced several architectural challenges.
-
-### AI Integration
-
-Building a pipeline involving transcription, embeddings, vector search, and retrieval required coordination across multiple services and asynchronous workflows.
-
-### Performance Optimization
-
-Efficient caching and background processing strategies were necessary to maintain responsiveness while handling computationally expensive operations.
-
----
-
-## Key Learnings
-
-VideoTube significantly improved understanding of:
-
-* Backend Architecture
-* Authentication Systems
-* API Design
-* MongoDB Data Modeling
-* Cloud Integrations
-* Queue-Based Processing
-* Redis Caching
-* Vector Databases
-* Semantic Search
-* Retrieval-Augmented Generation
-* AI Application Development
-* Production-Oriented Engineering
-
-The project represents a transition from traditional CRUD applications toward building systems that combine modern software engineering with artificial intelligence.
+### Why It Matters (for recruiter/client framing)
+Represents a deliberate shift from CRUD-tutorial projects to production-oriented engineering — demonstrates hands-on experience with queue-based processing, vector databases, RAG system design, and coordinating multiple external services (Cloudinary, Groq, Jina, Qdrant) in one cohesive async architecture.
