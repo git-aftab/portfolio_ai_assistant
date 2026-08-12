@@ -8,7 +8,7 @@
 
 ### Backend Stack
 - Runtime: Node.js, Framework: Express.js
-- Database: MongoDB with Mongoose ODM
+- Database: MongoDB with Mongoose ODM, Redis for caching
 - Auth: JWT (access + refresh tokens)
 - File Upload: Multer
 - Email: Nodemailer (verification, password reset)
@@ -16,10 +16,10 @@
 - Security: bcrypt, helmet, cors
 
 ### Frontend Stack
-- React 19 with React Router v7
-- TanStack React Query v5 (server state management)
+- React with React Router
+- TanStack React Query (server state management)
 - Axios (API calls)
-- Vite 6 (build tool)
+- Vite (build tool)
 - lucide-react (icons)
 - ESLint for code quality
 
@@ -33,13 +33,13 @@
 - Granular permission matrix distinguishing task, subtask, and note access per role
 
 ### Architecture Highlights
+- Redis caching layer for frequently accessed data, reducing database load and improving response times
 - MVC-style structure: separated controllers, models, routes, middleware, and config
 - Permission system enforced at the route/controller level based on project-scoped roles
+- Dedicated authorization middleware enforcing RBAC checks before controller logic runs, keeping permission logic separate from business logic
 - RESTful API versioned under `/api/v1`
 
 ### Notable Design Decisions
 - Three-tier RBAC scoped per-project (not global), allowing a user to hold different roles across different projects
 - Subtask status updates allowed for all members, but subtask creation/deletion restricted to Admin/Project Admin — separates "doing the work" from "structuring the work"
 - Refresh token pattern used alongside short-lived access tokens for session security
-
-**Support/Contact:** aftabdev18dev@gmail.com

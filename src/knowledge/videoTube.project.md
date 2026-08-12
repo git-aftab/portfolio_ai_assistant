@@ -34,6 +34,8 @@ RAG retrieves relevant transcript segments as grounding context rather than answ
 - Discovery: search, sort, filter, pagination, personalized feed
 - Social layer: comments, likes, playlists, subscriptions, watch history, channels, community posts (tweets)
 - AI layer: video summarization, semantic search, transcript Q&A
+- Redis caching layer for frequently accessed data, reducing database load and improving response times
+
 
 ### Architecture
 Modular backend: routes → controllers → middleware → validators → services → models → utilities → workers (clean separation for maintainability/testability). BullMQ offloads audio extraction, transcription, embedding generation, and indexing so heavy AI work never blocks user-facing requests.
@@ -42,7 +44,6 @@ Modular backend: routes → controllers → middleware → validators → servic
 - Secure refresh token rotation + multi-device session consistency
 - Keeping cloud storage (Cloudinary) and DB state consistent during large video uploads
 - Coordinating a multi-stage async AI pipeline (transcription → embedding → vector storage → retrieval) across independent workers
-- Redis caching strategy for trending/popular content and frequently accessed metadata to reduce DB load
 
 ### Why It Matters (for recruiter/client framing)
-Represents a deliberate shift from CRUD-tutorial projects to production-oriented engineering — demonstrates hands-on experience with queue-based processing, vector databases, RAG system design, and coordinating multiple external services (Cloudinary, Groq, Jina, Qdrant) in one cohesive async architecture.
+Represents a deliberate shift from CRUD-tutorial projects to production-oriented engineering — demonstrates hands-on experience with queue-based processing using BULLMQ, caching using REDIS, vector databases, RAG system design, and coordinating multiple external services (Cloudinary, Groq, Jina, Qdrant) in one cohesive async architecture.

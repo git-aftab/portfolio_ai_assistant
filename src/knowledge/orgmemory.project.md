@@ -13,7 +13,7 @@
 - Notion API integration for live sync
 
 ### Frontend Stack
-- React 18, Vite, Tailwind CSS
+- React, Vite, Tailwind CSS
 
 ### Hybrid RAG Pipeline (6 stages)
 1. Metadata SQL pre-filtering (language + tags)
